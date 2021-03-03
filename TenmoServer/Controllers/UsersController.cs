@@ -33,7 +33,7 @@ namespace TenmoServer.Controllers
         //TODO : add authorization for getting user
         //[Authorize(Roles = "ReturnUser")]
         [HttpGet("{username}")]
-        public ActionResult<List<Account>> GetAccountByUsername(string username)
+        public ActionResult<List<Account>> GetAccountsByUsername(string username)
         {
 
             List<Account> accounts = AccountDAO.GetAccounts(username);
@@ -44,11 +44,15 @@ namespace TenmoServer.Controllers
             return accounts;
         }
 
-        //[HttpGet("{username}/{accountId}")]
-        //public ActionResult<Account> GetUserAccount(string username, int accountId)
-        //{
-        //    User user = UserDAO.GetUser(username);
-        //    Account userAccount = AccountDAO.GetAccount(username);
-        //}
+        [HttpGet("{username}/{accountId}")]
+        public ActionResult<Account> GetAccountInfo(string username, int accountId)
+        {
+            Account userAccount = AccountDAO.GetAccount(username, accountId);
+            if (userAccount == null)
+            {
+                return NotFound();
+            }
+            return userAccount;
+        }
     }
 }

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TenmoServer.DAO;
+using TenmoServer.Models;
 
 namespace TenmoServer.Controllers
 {
@@ -19,11 +20,26 @@ namespace TenmoServer.Controllers
             this.AccountDAO = accountDAO;
         }
 
-        //[HttpGet("{accountId}")]
-        //public decimal GetBalance(int accountId)
-        //{
-        //    return AccountDAO.GetBalance(accountId);
-        //}
+        [HttpGet("{accountId}")]
+        public ActionResult<Account> GetAccount (int accountId)
+        {
+            Account account= AccountDAO.GetAccount(accountId);
+            if (account == null)
+            {
+                return NotFound();
+            }
+            return account;
+        }
 
+        [HttpGet]
+        public ActionResult<List<Account>> GetAccounts()
+        {
+            List<Account> accounts = AccountDAO.GetAccounts();
+            if (accounts == null)
+            {
+                return NotFound();
+            }
+            return accounts;
+        }
     }
 }

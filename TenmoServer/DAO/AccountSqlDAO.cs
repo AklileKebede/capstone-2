@@ -39,6 +39,31 @@ namespace TenmoServer.DAO
                 throw;
             }
         }
+        public List<Account> GetAccounts()
+        {
+            List<Account> accounts = new List<Account>();
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand("SELECT * From accounts", conn);
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        accounts.Add(RowToObject(reader));
+
+                    }
+                }
+                return accounts;
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+        }
 
         public List<Account> GetAccounts(string username)
         {
@@ -60,6 +85,59 @@ namespace TenmoServer.DAO
                     }
                 }
                 return accounts;
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+        }
+        public Account GetAccount(string username, int accountId)
+        {
+            Account account = null;
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand("SELECT a.user_id, a.account_id, a.balance FROM users u JOIN accounts a ON u.user_id = a.user_id WHERE u.username = @username AND a.account_id=@accountId", conn);
+                    cmd.Parameters.AddWithValue("@username", username);
+                    cmd.Parameters.AddWithValue("@accountId", accountId);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        account= RowToObject(reader);
+
+                    }
+                }
+                return account;
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+            
+        }
+        public Account GetAccount(int accountId)
+        {
+            Account account = null;
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand("SELECT * From accounts Where account_id= @accountId", conn);
+                    cmd.Parameters.AddWithValue("@accountId", accountId);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        account = RowToObject(reader);
+                    }
+                }
+                return account;
             }
             catch (SqlException)
             {
