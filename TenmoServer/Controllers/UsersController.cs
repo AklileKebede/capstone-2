@@ -12,7 +12,7 @@ namespace TenmoServer.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class UsersController : ControllerBase
     {
         private IAccountDAO AccountDAO;
@@ -30,11 +30,25 @@ namespace TenmoServer.Controllers
             return UserDAO.GetUsers();
         }
 
-        [HttpGet("{accountId}")]
-        public List<User> GetUserAccounts(int accountId)
+        //TODO : add authorization for getting user
+        //[Authorize(Roles = "ReturnUser")]
+        [HttpGet("{username}")]
+        public ActionResult<List<Account>> GetAccountByUsername(string username)
         {
-            //return AccountDAO.
+
+            List<Account> accounts = AccountDAO.GetAccounts(username);
+            if(accounts == null)
+            {
+               return NotFound();
+            }
+            return accounts;
         }
 
+        //[HttpGet("{username}/{accountId}")]
+        //public ActionResult<Account> GetUserAccount(string username, int accountId)
+        //{
+        //    User user = UserDAO.GetUser(username);
+        //    Account userAccount = AccountDAO.GetAccount(username);
+        //}
     }
 }
