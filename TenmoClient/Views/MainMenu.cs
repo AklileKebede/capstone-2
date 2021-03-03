@@ -8,9 +8,11 @@ namespace TenmoClient.Views
 {
     public class MainMenu : ConsoleMenu
     {
-
+        
+        // TODO: INITILIZAE DAO'S HERE, AND SET THEM IN THE CONSTRUCTOR
         public MainMenu()
         { 
+            // TODO: NEED TO UPDATE THE CONSTRUCTOR TO HAVE THE DAO'S PASSED IN, AND SET THEM IN THE CONSTRUCTOR
             AddOption("View your current balance", ViewBalance)
                 .AddOption("View your past transfers", ViewTransfers)
                 .AddOption("View your pending requests", ViewRequests)
@@ -27,7 +29,11 @@ namespace TenmoClient.Views
 
         private MenuOptionResult ViewBalance()
         {
-            Console.WriteLine("Not yet implemented!");
+            // create a rest request to the /users/username/account# url, get back a balance
+            int accountId = MainMenu.GetInteger("Please enter your account Id: ");
+            //UserService.GetUserName
+            // TODO: THIS WILL CALL THE ACCOUNTDAO AND IT WILL RETURN AN ACCOUNT (GETACCOUNT METHOD).  WE WILL USE THAT ACCOUNT TO REFERENCE THE BALANCE BY ACCOUNT.BALANCE
+
             return MenuOptionResult.WaitAfterMenuSelection;
         }
 

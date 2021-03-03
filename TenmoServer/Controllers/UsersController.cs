@@ -23,19 +23,28 @@ namespace TenmoServer.Controllers
             this.AccountDAO = accountDAO;
             this.UserDAO = userDAO;
         }
-        
+
         [HttpGet]
+        //admin
+        [Authorize(Roles = "Admin")]
         public List<User> GetUsers()
         {
             return UserDAO.GetUsers();
         }
 
-        //TODO : add authorization for getting user
-        //[Authorize(Roles = "ReturnUser")]
-        [HttpGet("{username}")]
+        //[HttpGet("{username}")]
+        //public ActionResult
+        //not necessary to implement this cause its not relevent data
+
+        [HttpGet("{username}/accounts")]
+        [Authorize(Roles = "User, Admin")]
         public ActionResult<List<Account>> GetAccountsByUsername(string username)
         {
-
+            // todo if it they don't have access, return an empty list IF WE WANT
+            if (username.ToLower() != User.Identity.Name && !User.IsInRole("Admin")) // <- this is magic
+            {
+                return NotFound();
+            }
             List<Account> accounts = AccountDAO.GetAccounts(username);
             if(accounts == null)
             {
@@ -44,15 +53,20 @@ namespace TenmoServer.Controllers
             return accounts;
         }
 
-        [HttpGet("{username}/{accountId}")]
-        public ActionResult<Account> GetAccountInfo(string username, int accountId)
-        {
-            Account userAccount = AccountDAO.GetAccount(username, accountId);
-            if (userAccount == null)
-            {
-                return NotFound();
-            }
-            return userAccount;
-        }
+        //[HttpGet("{username}/accounts/{accountId}")]
+        //[Authorize(Roles = "User, Admin")]
+        //public ActionResult<Account> GetAccountInfo(string username, int accountId)
+        //{
+        //    if (username.ToLower() != User.Identity.Name && !User.IsInRole("Admin")) // <- this is magic
+        //    {
+        //        return NotFound();
+        //    }
+        //    Account userAccount = AccountDAO.GetAccount(username, accountId);
+        //    if (userAccount == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return userAccount;
+        //}
     }
 }

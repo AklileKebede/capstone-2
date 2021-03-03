@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ namespace TenmoServer.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
     public class AccountsController : ControllerBase
     {
         private IAccountDAO AccountDAO;
@@ -20,17 +22,7 @@ namespace TenmoServer.Controllers
             this.AccountDAO = accountDAO;
         }
 
-        [HttpGet("{accountId}")]
-        public ActionResult<Account> GetAccount (int accountId)
-        {
-            Account account= AccountDAO.GetAccount(accountId);
-            if (account == null)
-            {
-                return NotFound();
-            }
-            return account;
-        }
-
+        //accounts
         [HttpGet]
         public ActionResult<List<Account>> GetAccounts()
         {
@@ -40,6 +32,29 @@ namespace TenmoServer.Controllers
                 return NotFound();
             }
             return accounts;
+        }
+
+        //accounts/accountId
+        [HttpGet("{accountId}")]
+        [Authorize(Roles = "User")]
+        public ActionResult<Account> GetAccount (int accountId)
+        {
+            Account account = null;
+            if (User.IsInRole("Admin"))
+            {
+                account = AccountDAO.GetAccount(accountId);
+            }
+            else
+            {
+                account = AccountDAO.GetAccount(User.Identity.Name, accountId);
+            }
+
+            if (account == null)
+            {
+                return NotFound();
+            }
+
+            return account;
         }
     }
 }
