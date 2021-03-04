@@ -7,7 +7,7 @@ using TenmoServer.Models;
 
 namespace TenmoServer.DAO
 {
-    public class TransferSqlDAO
+    public class TransferSqlDAO : ITransferDAO
     {
         private readonly string connectionString;
 
@@ -19,7 +19,7 @@ namespace TenmoServer.DAO
 
 
         //create a transfer method, return a tranfer 
-        public int CreateTransfer(Transfer transfer)
+        public Transfer CreateTransfer(Transfer transfer)
         {
             try
             {
@@ -27,20 +27,18 @@ namespace TenmoServer.DAO
                 {
                     conn.Open();
 
-                    SqlCommand cmd = new SqlCommand("INSERT INTO transfers (transfer_type_id, transfer_status_id, account_from, account_to, amount) VALUES (2, 2, @accountfrom, @accountto, @amount; SELECT @@IDENTITY)", conn);
+                    SqlCommand cmd = new SqlCommand("INSERT INTO transfers (transfer_type_id, transfer_status_id, account_from, account_to, amount) VALUES (2, 2, @accountfrom, @accountto, @amount); SELECT @@IDENTITY;", conn);
                     cmd.Parameters.AddWithValue("@accountfrom", transfer.AccountFrom);
                     cmd.Parameters.AddWithValue("@accountto", transfer.AccountTo);
                     cmd.Parameters.AddWithValue("@amount", transfer.Amount);
-                    return Convert.ToInt32(cmd.ExecuteScalar());
-
+                    transfer.TransferId = Convert.ToInt32(cmd.ExecuteScalar());
                 }
             }
             catch (SqlException)
             {
                 throw;
             }
-
-
+            return transfer;
         }
         //list of transfers
         public List<Transfer> GetTransfers()
@@ -54,7 +52,7 @@ namespace TenmoServer.DAO
 
                     SqlCommand cmd = new SqlCommand("SELECT * FROM transfers", conn);
                     SqlDataReader rdr = cmd.ExecuteReader();
-                    while(rdr.Read())
+                    while (rdr.Read())
                     {
                         Transfer transfer = new Transfer();
                         transfer.AccountFrom = Convert.ToInt32(rdr["account_from"]);
@@ -72,7 +70,6 @@ namespace TenmoServer.DAO
                 throw;
             }
             return transfers;
-
         }
     }
 }

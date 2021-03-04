@@ -53,12 +53,14 @@ namespace TenmoServer
             // Dependency Injection configuration
             services.AddSingleton<ITokenGenerator>(tk => new JwtGenerator(Configuration["JwtSecret"]));
             services.AddSingleton<IPasswordHasher>(ph => new PasswordHasher());
-
             services.AddTransient<IUserDAO>(m => new UserSqlDAO(connectionString));
-
             services.AddTransient<IAccountDAO, AccountSqlDAO>(sp =>
             {
                 return new AccountSqlDAO(connectionString);
+            });
+            services.AddTransient<ITransferDAO, TransferSqlDAO>(sp =>
+            {
+                return new TransferSqlDAO(connectionString);
             });
         }
 
