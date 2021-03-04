@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using TenmoClient.DAL;
 using TenmoClient.Data;
 
 namespace TenmoClient.Views
@@ -10,10 +11,13 @@ namespace TenmoClient.Views
     public class LoginRegisterMenu : ConsoleMenu
     {
         private readonly AuthService authService;
+        private IAccountDAO accountDao;
 
-        public LoginRegisterMenu(AuthService authService)
+        public LoginRegisterMenu(AuthService authService, IAccountDAO accountDAO )
         {
             this.authService = authService;
+            this.accountDao = accountDAO;
+
 
             AddOption("Login", Login)
                 .AddOption("Register", Register)
@@ -43,7 +47,7 @@ namespace TenmoClient.Views
             UserService.SetLogin(user);
 
             // User is logged in, show the main menu now.
-            return new MainMenu().Show();
+            return new MainMenu(accountDao).Show();
         }
 
         private MenuOptionResult Register()

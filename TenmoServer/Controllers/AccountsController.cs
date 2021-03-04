@@ -12,7 +12,7 @@ namespace TenmoServer.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    [Authorize(Roles = "Admin")]
+   //[Authorize(Roles = "Admin")]
     public class AccountsController : ControllerBase
     {
         private IAccountDAO AccountDAO;
@@ -36,7 +36,7 @@ namespace TenmoServer.Controllers
 
         //accounts/accountId
         [HttpGet("{accountId}")]
-        [Authorize(Roles = "User")]
+        //[Authorize]
         public ActionResult<Account> GetAccount (int accountId)
         {
             Account account = null;

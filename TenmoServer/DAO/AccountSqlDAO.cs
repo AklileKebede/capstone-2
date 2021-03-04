@@ -94,6 +94,7 @@ namespace TenmoServer.DAO
         public Account GetAccount(string username, int accountId)
         {
             Account account = null;
+            //username = User.Identity.Name;
             try
             {
                 using (SqlConnection conn = new SqlConnection(connectionString))

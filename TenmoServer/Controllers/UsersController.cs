@@ -26,18 +26,15 @@ namespace TenmoServer.Controllers
 
         [HttpGet]
         //admin
-        [Authorize(Roles = "Admin")]
+    //    [Authorize(Roles = "Admin")]
         public List<User> GetUsers()
         {
             return UserDAO.GetUsers();
         }
 
-        //[HttpGet("{username}")]
-        //public ActionResult
-        //not necessary to implement this cause its not relevent data
 
         [HttpGet("{username}/accounts")]
-        [Authorize(Roles = "User, Admin")]
+      //  [Authorize(Roles = "User, Admin")]
         public ActionResult<List<Account>> GetAccountsByUsername(string username)
         {
             // todo if it they don't have access, return an empty list IF WE WANT
@@ -53,20 +50,20 @@ namespace TenmoServer.Controllers
             return accounts;
         }
 
-        //[HttpGet("{username}/accounts/{accountId}")]
+        [HttpGet("{username}/accounts/{accountId}")]
         //[Authorize(Roles = "User, Admin")]
-        //public ActionResult<Account> GetAccountInfo(string username, int accountId)
-        //{
-        //    if (username.ToLower() != User.Identity.Name && !User.IsInRole("Admin")) // <- this is magic
-        //    {
-        //        return NotFound();
-        //    }
-        //    Account userAccount = AccountDAO.GetAccount(username, accountId);
-        //    if (userAccount == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return userAccount;
-        //}
+        public ActionResult<Account> GetAccountInfo(string username, int accountId)
+        {
+            if (username.ToLower() != User.Identity.Name && !User.IsInRole("Admin")) // <- this is magic
+            {
+                return NotFound();
+            }
+            Account userAccount = AccountDAO.GetAccount(username, accountId);
+            if (userAccount == null)
+            {
+                return NotFound();
+            }
+            return userAccount;
+        }
     }
 }

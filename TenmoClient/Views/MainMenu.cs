@@ -2,16 +2,21 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using TenmoClient.DAL;
 using TenmoClient.Data;
 
 namespace TenmoClient.Views
 {
     public class MainMenu : ConsoleMenu
     {
-        
+
         // TODO: INITILIZAE DAO'S HERE, AND SET THEM IN THE CONSTRUCTOR
-        public MainMenu()
-        { 
+        private IAccountDAO accountDao;
+        
+        public MainMenu(IAccountDAO accountDao)
+        {
+            this.accountDao = accountDao;
+
             // TODO: NEED TO UPDATE THE CONSTRUCTOR TO HAVE THE DAO'S PASSED IN, AND SET THEM IN THE CONSTRUCTOR
             AddOption("View your current balance", ViewBalance)
                 .AddOption("View your past transfers", ViewTransfers)
@@ -29,11 +34,20 @@ namespace TenmoClient.Views
 
         private MenuOptionResult ViewBalance()
         {
+            try { 
             // create a rest request to the /users/username/account# url, get back a balance
             int accountId = MainMenu.GetInteger("Please enter your account Id: ");
-            //UserService.GetUserName
-            // TODO: THIS WILL CALL THE ACCOUNTDAO AND IT WILL RETURN AN ACCOUNT (GETACCOUNT METHOD).  WE WILL USE THAT ACCOUNT TO REFERENCE THE BALANCE BY ACCOUNT.BALANCE
 
+                // TODO: THIS WILL CALL THE ACCOUNTDAO AND IT WILL RETURN AN ACCOUNT (GETACCOUNT METHOD).  WE WILL USE THAT ACCOUNT TO REFERENCE THE BALANCE BY ACCOUNT.BALANCE
+                // UserService.GetUserName
+               // Account account = accountDao.GetAccount(accountId);
+                Account account1 = accountDao.GetAccount(UserService.GetUserName(), accountId);
+                Console.WriteLine($"Your account {accountId} has the balance of: {account1.Balance}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
             return MenuOptionResult.WaitAfterMenuSelection;
         }
 

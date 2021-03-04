@@ -6,9 +6,9 @@ using TenmoClient.Data;
 
 namespace TenmoClient.DAL
 {
-    public class AccountApiDAO
+    public class AccountApiDAO : IAccountDAO
     {
-        private RestClient client;
+        private readonly RestClient client;
 
         public AccountApiDAO(string api_url)
         {
@@ -22,23 +22,21 @@ namespace TenmoClient.DAL
         //  url/accounts/
         //}
 
-        public Account GetAccount(int accountId)
+        public Account GetAccount(string username, int accountId)
         {
-            RestRequest request = new RestRequest($"accounts/{accountId}");
+            RestRequest request = new RestRequest($"users/{username}/accounts/{accountId}");
             //accounts/accountId
 
-            // TODO: UPDATE ME THIS WAS COPY AND PASTED IN!!!!
             IRestResponse<Account> response = client.Get<Account>(request);
             if (response.ResponseStatus != ResponseStatus.Completed || !response.IsSuccessful)
             {
                 //ProcessErrorResponse(response);
+                throw new Exception("Error occurred - unable to reach server: " + (int)response.StatusCode);
             }
             else
             {
                 return response.Data;
             }
-
-            return null;
         }
     }
 }
