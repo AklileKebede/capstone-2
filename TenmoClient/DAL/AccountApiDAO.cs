@@ -17,31 +17,24 @@ namespace TenmoClient.DAL
             client.Authenticator = new JwtAuthenticator(UserService.GetToken());
         }
 
-        //public decimal GetBalance(int accountId)
+        // THIS WAS THE OLD WAY OF DOING IT - WITHOUT THE TOKEN.  DO NOT USE ME
+        //public Account GetAccount(string username, int accountId)
         //{
-        //    RestRequest request = new RestRequest($"accounts/{accountId}");
-        //  url/users/username/1
-        //  url/accounts/
+        //    RestRequest request = new RestRequest($"users/{username}/accounts/{accountId}");
+        //    //accounts/accountId
+
+        //    IRestResponse<Account> response = client.Get<Account>(request);
+        //    if (response.ResponseStatus != ResponseStatus.Completed || !response.IsSuccessful)
+        //    {
+        //        throw new Exception("Error occurred - unable to reach server: " + (int)response.StatusCode);
+        //    }
+        //    else
+        //    {
+        //        return response.Data;
+        //    }
+
+
         //}
-
-        public Account GetAccount(string username, int accountId)
-        {
-            RestRequest request = new RestRequest($"users/{username}/accounts/{accountId}");
-            //accounts/accountId
-
-            IRestResponse<Account> response = client.Get<Account>(request);
-            if (response.ResponseStatus != ResponseStatus.Completed || !response.IsSuccessful)
-            {
-                //ProcessErrorResponse(response);
-                throw new Exception("Error occurred - unable to reach server: " + (int)response.StatusCode);
-            }
-            else
-            {
-                return response.Data;
-            }
-
-
-        }
 
         public Account GetAccount( int accountId)
         {
@@ -51,7 +44,22 @@ namespace TenmoClient.DAL
             IRestResponse<Account> response = client.Get<Account>(request);
             if (response.ResponseStatus != ResponseStatus.Completed || !response.IsSuccessful)
             {
-                //ProcessErrorResponse(response);
+                throw new Exception("Error occurred - unable to reach server: " + (int)response.StatusCode);
+            }
+            else
+            {
+                return response.Data;
+            }
+        }
+
+        public List<Account> GetAccounts()
+        {
+            RestRequest request = new RestRequest($"accounts");
+            //accounts/accountId
+
+            IRestResponse<List<Account>> response = client.Get<List<Account>>(request);
+            if (response.ResponseStatus != ResponseStatus.Completed || !response.IsSuccessful)
+            {
                 throw new Exception("Error occurred - unable to reach server: " + (int)response.StatusCode);
             }
             else
