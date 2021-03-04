@@ -13,9 +13,9 @@ namespace TenmoClient.Views
         // TODO: INITILIZAE DAO'S HERE, AND SET THEM IN THE CONSTRUCTOR
         private IAccountDAO accountDao;
         
-        public MainMenu(IAccountDAO accountDao)
+        public MainMenu(string api_url)
         {
-            this.accountDao = accountDao;
+            this.accountDao = new AccountApiDAO(api_url);
 
             // TODO: NEED TO UPDATE THE CONSTRUCTOR TO HAVE THE DAO'S PASSED IN, AND SET THEM IN THE CONSTRUCTOR
             AddOption("View your current balance", ViewBalance)
@@ -40,9 +40,9 @@ namespace TenmoClient.Views
 
                 // TODO: THIS WILL CALL THE ACCOUNTDAO AND IT WILL RETURN AN ACCOUNT (GETACCOUNT METHOD).  WE WILL USE THAT ACCOUNT TO REFERENCE THE BALANCE BY ACCOUNT.BALANCE
                 // UserService.GetUserName
-               // Account account = accountDao.GetAccount(accountId);
-                Account account1 = accountDao.GetAccount(UserService.GetUserName(), accountId);
-                Console.WriteLine($"Your account {accountId} has the balance of: {account1.Balance}");
+               Account account = accountDao.GetAccount(accountId);
+                //Account account1 = accountDao.GetAccount(UserService.GetUserName(), accountId);
+                Console.WriteLine($"Your account {accountId} has the balance of: {account.Balance}");
             }
             catch (Exception ex)
             {

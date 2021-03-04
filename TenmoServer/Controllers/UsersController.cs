@@ -12,7 +12,7 @@ namespace TenmoServer.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class UsersController : ControllerBase
     {
         private IAccountDAO AccountDAO;
@@ -37,7 +37,7 @@ namespace TenmoServer.Controllers
       //  [Authorize(Roles = "User, Admin")]
         public ActionResult<List<Account>> GetAccountsByUsername(string username)
         {
-            // todo if it they don't have access, return an empty list IF WE WANT
+             //todo if it they don't have access, return an empty list IF WE WANT
             if (username.ToLower() != User.Identity.Name && !User.IsInRole("Admin")) // <- this is magic
             {
                 return NotFound();
