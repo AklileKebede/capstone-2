@@ -35,6 +35,13 @@ namespace TenmoClient.DAL
             }
         }
 
-        //public 
+        public bool SendMoney(int fromUserId, int toUserId)
+        {
+            RestRequest request = new RestRequest("transfers");
+
+            return true;
+        }
+
+        
     }
 }
