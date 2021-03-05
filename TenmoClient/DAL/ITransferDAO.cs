@@ -6,5 +6,6 @@ namespace TenmoClient.DAL
     public interface ITransferDAO
     {
         List<API_User> GetUsers();
+        bool SendMoney(int fromUserId, int toUserId, decimal amount);
     }
 }

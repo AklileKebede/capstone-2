@@ -82,20 +82,21 @@ namespace TenmoClient.Views
                 }
                 Console.WriteLine("---------");
                 Console.WriteLine("");
-                bool badInput = true;
-                int userId;
 
+
+                bool badInput = true;
+                int toUserId = -1;
                 //loop until we find a user id that is actually in the list
                 while (badInput)
                 {
-                    userId = GetInteger("Enter ID of user you are sending to (0 to cancel): ");
-                    if (userId == 0)
+                    toUserId = GetInteger("Enter ID of user you are sending to (0 to cancel): ");
+                    if (toUserId == 0)
                     {
                         return MenuOptionResult.WaitAfterMenuSelection;
                     }
                     foreach (API_User user in users)
                     {
-                        if (user.UserId == userId)
+                        if (user.UserId == toUserId && toUserId != UserService.GetUserId())
                         {
                             badInput = false;
                         }
@@ -106,44 +107,41 @@ namespace TenmoClient.Views
                     }
                 }
 
-                // THIS NEEDS TO BE ADDED IN AND SLIGHTLY CHANGED IF WE NEED TO GO THROUGH AND VALIDATE ACCOUNT NUMBERS OF BOTH SENDER AND RECEIVER
-                //badInput = true;
-                //int accountId;
-                //while (badInput)
-                //{
-                //    userId = GetInteger("Enter your account ID of money to be taken out: ");
-                //    if (userId == 0)
-                //    {
-                //        return MenuOptionResult.WaitAfterMenuSelection;
-                //    }
-                //    foreach (API_User user in users)
-                //    {
-                //        if (user.UserId == userId)
-                //        {
-                //            badInput = false;
-                //        }
-                //    }
-                //    if (badInput)
-                //    {
-                //        Console.WriteLine("Please enter a valid User Id");
-                //    }
-                //}
+                // make sure amount is greater than 0
+                badInput = true;
+                decimal amount = -1;
+                while (badInput)
+                {
+                    amount = GetInteger("Enter amount: ");
+                    if (amount <= 0)
+                    {
+                        Console.WriteLine("Please enter an amount greater than 0");
+                    }
+                    else
+                    {
+                        badInput = false;
+                    }
+                }
 
-                // TODO: PUT IN LOGIC HERE TO MAKE SURE AMOUNT IS GREATER THAN 0
-                decimal amount = GetInteger("Enter amount: ");
-                Account account = accountDao.GetAccount(UserService.GetUserId());
-                if (amount > account.Balance)
+                // check to make sure your balance has enough money in it to transfer to the other account
+                Account fromAccount = accountDao.GetAccount(UserService.GetUserId());
+                if (amount > fromAccount.Balance)
                 {
                     Console.WriteLine("Insufficient balance");
                     return MenuOptionResult.WaitAfterMenuSelection;
                 }
                 else
                 {
-
+                    bool transferSuccessful = transferDao.SendMoney(fromAccount.AccountId, toUserId, amount);
+                    if (transferSuccessful)
+                    {
+                        Console.WriteLine("TRANSACTION APPROVED!");
+                    }
+                    else
+                    {
+                        Console.WriteLine("TRANSACTION FAILED");
+                    }
                 }
-
-
-
             }
             catch (Exception ex)
             {
@@ -152,6 +150,8 @@ namespace TenmoClient.Views
             return MenuOptionResult.WaitAfterMenuSelection;
         }
 
+
+        // THIS NEEDS TO BE UPDATED - JUST COPY AND PASTED STUFF
         private MenuOptionResult RequestTEBucks()
         {
             try
@@ -190,29 +190,6 @@ namespace TenmoClient.Views
                         Console.WriteLine("Please enter a valid User Id");
                     }
                 }
-
-                // THIS NEEDS TO BE ADDED IN AND SLIGHTLY CHANGED IF WE NEED TO GO THROUGH AND VALIDATE ACCOUNT NUMBERS OF BOTH SENDER AND RECEIVER
-                //badInput = true;
-                //int accountId;
-                //while (badInput)
-                //{
-                //    userId = GetInteger("Enter your account ID of money to be taken out: ");
-                //    if (userId == 0)
-                //    {
-                //        return MenuOptionResult.WaitAfterMenuSelection;
-                //    }
-                //    foreach (API_User user in users)
-                //    {
-                //        if (user.UserId == userId)
-                //        {
-                //            badInput = false;
-                //        }
-                //    }
-                //    if (badInput)
-                //    {
-                //        Console.WriteLine("Please enter a valid User Id");
-                //    }
-                //}
 
                 // TODO: PUT IN LOGIC HERE TO MAKE SURE AMOUNT IS GREATER THAN 0
                 decimal amount = GetInteger("Enter amount: ");

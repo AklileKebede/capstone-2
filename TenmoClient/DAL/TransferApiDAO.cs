@@ -35,13 +35,29 @@ namespace TenmoClient.DAL
             }
         }
 
-        public bool SendMoney(int fromUserId, int toUserId)
+        public bool SendMoney(int fromUserId, int toUserId, decimal amount)
         {
             RestRequest request = new RestRequest("transfers");
 
-            return true;
-        }
+            //create new transfer with the info passed in
+            Transfer newTransfer = new Transfer();
+            newTransfer.AccountFrom = fromUserId;
+            newTransfer.AccountTo = toUserId;
+            newTransfer.Amount = amount;
 
-        
+            //pass through
+            request.AddJsonBody(newTransfer);
+            IRestResponse<Transfer> response = client.Post<Transfer>(request);
+            if (response.ResponseStatus != ResponseStatus.Completed || !response.IsSuccessful)
+            {
+                throw new Exception("Error occurred - unable to reach server: " + (int)response.StatusCode);
+                // TODO we need to change this to return false after we know this is successfully connecting to the server
+                //return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
     }
 }

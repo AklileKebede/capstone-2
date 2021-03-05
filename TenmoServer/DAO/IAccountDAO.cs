@@ -10,5 +10,6 @@ namespace TenmoServer.DAO
         Account GetAccount(string username, int accountId);
         Account GetAccount(int accountId);
         decimal GetBalance(int accountId);
+        bool SendMoney(Transfer transfer, decimal fromAccountBalance, decimal toAccountBalance);
     }
 }

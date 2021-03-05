@@ -39,6 +39,7 @@ namespace TenmoServer.DAO
                 throw;
             }
         }
+
         public List<Account> GetAccounts()
         {
             List<Account> accounts = new List<Account>();
@@ -91,6 +92,7 @@ namespace TenmoServer.DAO
                 throw;
             }
         }
+
         public Account GetAccount(string username, int accountId)
         {
             Account account = null;
@@ -120,6 +122,7 @@ namespace TenmoServer.DAO
             }
             
         }
+
         public Account GetAccount(int accountId)
         {
             Account account = null;
@@ -139,6 +142,30 @@ namespace TenmoServer.DAO
                     }
                 }
                 return account;
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+        }
+
+        public bool SendMoney(Transfer transfer, decimal fromAccountBalance, decimal toAccountBalance)
+        {
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand("Begin Transaction; Update accounts set balance = @fromAccountBalance where account_id = @fromAccountId Update accounts set balance = @toAccountBalance where account_id = @toAccountId; Commit transaction;", conn);
+                    cmd.Parameters.AddWithValue("@fromAccountId", transfer.AccountFrom);
+                    cmd.Parameters.AddWithValue("@toAccountId", transfer.AccountTo);
+                    cmd.Parameters.AddWithValue("@fromAccountBalance", fromAccountBalance - transfer.Amount);
+                    cmd.Parameters.AddWithValue("@toAccountBalance", toAccountBalance + transfer.Amount);
+
+                    cmd.ExecuteNonQuery();
+                    return true;
+                }
             }
             catch (SqlException)
             {
