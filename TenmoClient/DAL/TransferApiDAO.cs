@@ -35,6 +35,22 @@ namespace TenmoClient.DAL
             }
         }
 
+        public List<Transfer> GetTransfers(string username)
+        {
+            RestRequest request = new RestRequest($"transfers");
+            //users
+
+            IRestResponse<List<Transfer>> response = client.Get<List<Transfer>>(request);
+            if (response.ResponseStatus != ResponseStatus.Completed || !response.IsSuccessful)
+            {
+                throw new Exception("Error occurred - unable to reach server: " + (int)response.StatusCode);
+            }
+            else
+            {
+                return response.Data;
+            }
+        }
+
         public bool SendMoney(int fromUserId, int toUserId, decimal amount)
         {
             RestRequest request = new RestRequest("transfers");
@@ -59,5 +75,7 @@ namespace TenmoClient.DAL
                 return true;
             }
         }
+
+
     }
 }

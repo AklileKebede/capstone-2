@@ -17,11 +17,13 @@ namespace TenmoServer.Controllers
     {
         private IAccountDAO AccountDAO;
         private IUserDAO UserDAO;
+        private ITransferDAO TransferDAO;
 
-        public UsersController(IAccountDAO accountDAO, IUserDAO userDAO)
+        public UsersController(IAccountDAO accountDAO, IUserDAO userDAO, ITransferDAO transferDAO)
         {
             this.AccountDAO = accountDAO;
             this.UserDAO = userDAO;
+            this.TransferDAO = transferDAO;
         }
 
         [HttpGet]
@@ -31,6 +33,13 @@ namespace TenmoServer.Controllers
         {
             return UserDAO.GetUsers();
         }
+
+        //[HttpGet("userId")]
+        //public User GetUserById(int userId)
+        //{
+        //    return UserDAO.GetUserById(userId);
+        //}
+
 
 
         [HttpGet("{username}/accounts")]
@@ -50,20 +59,37 @@ namespace TenmoServer.Controllers
             return accounts;
         }
 
-        [HttpGet("{username}/accounts/{accountId}")]
-        //[Authorize(Roles = "User, Admin")]
-        public ActionResult<Account> GetAccountInfo(string username, int accountId)
+
+
+        //[HttpGet("{username}/transfers/{userId}")]
+        ////[Authorize(Roles = "User, Admin")]
+        //public ActionResult<Account> GetAccountInfo(string username, int userId)
+        //{
+        //    if (username.ToLower() != User.Identity.Name && !User.IsInRole("Admin")) // <- this is magic
+        //    {
+        //        return NotFound();
+        //    }
+        //    Account userAccount = AccountDAO.GetAccount(username, userId);
+        //    if (userAccount == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return userAccount;
+        //}
+
+        [HttpGet("{username}/transfers")]
+        public ActionResult<List<Transfer>> GetTransfers(string username)
         {
-            if (username.ToLower() != User.Identity.Name && !User.IsInRole("Admin")) // <- this is magic
+            if (username.ToLower() != User.Identity.Name && !User.IsInRole("Admin"))
             {
                 return NotFound();
             }
-            Account userAccount = AccountDAO.GetAccount(username, accountId);
-            if (userAccount == null)
+            List<Transfer> userTransfers = TransferDAO.GetTransfers(username);
+            if (userTransfers == null)
             {
-                return NotFound();
+                return NoContent();
             }
-            return userAccount;
+            return userTransfers;
         }
     }
 }

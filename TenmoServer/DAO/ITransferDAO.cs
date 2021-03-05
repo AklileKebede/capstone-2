@@ -7,5 +7,6 @@ namespace TenmoServer.DAO
     {
         Transfer CreateTransfer(Transfer transfer);
         List<Transfer> GetTransfers();
+        List<Transfer> GetTransfers(string username);
     }
 }

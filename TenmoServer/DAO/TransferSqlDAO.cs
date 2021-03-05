@@ -55,13 +55,7 @@ namespace TenmoServer.DAO
                     SqlDataReader rdr = cmd.ExecuteReader();
                     while (rdr.Read())
                     {
-                        Transfer transfer = new Transfer();
-                        transfer.AccountFrom = Convert.ToInt32(rdr["account_from"]);
-                        transfer.AccountTo = Convert.ToInt32(rdr["account_to"]);
-                        transfer.Amount = Convert.ToDecimal(rdr["amount"]);
-                        transfer.TransferId = Convert.ToInt32(rdr["transfer_id"]);
-                        transfer.TransferStatusId = Convert.ToInt32(rdr["transfer_status_id"]);
-                        transfer.TransferTypeId = Convert.ToInt32(rdr["transfer_type_id"]);
+                        Transfer transfer = RowToObject(rdr);
                         transfers.Add(transfer);
                     }
                 }
@@ -71,6 +65,44 @@ namespace TenmoServer.DAO
                 throw;
             }
             return transfers;
+        }
+
+        public List<Transfer> GetTransfers(string username)
+        {
+            List<Transfer> transfers = new List<Transfer>();
+            try
+            {
+                using (SqlConnection conn = new SqlConnection(connectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand("SELECT * FROM transfers WHERE account_from = (SELECT user_id from users WHERE username = @username)", conn);
+                    cmd.Parameters.AddWithValue("@username", username);
+                    SqlDataReader rdr = cmd.ExecuteReader();
+                    while (rdr.Read())
+                    {
+                        Transfer transfer = RowToObject(rdr);
+                        transfers.Add(transfer);
+                    }
+                }
+            }
+            catch (SqlException)
+            {
+                throw;
+            }
+            return transfers;
+        }
+
+        private static Transfer RowToObject(SqlDataReader rdr)
+        {
+            Transfer transfer = new Transfer();
+            transfer.AccountFrom = Convert.ToInt32(rdr["account_from"]);
+            transfer.AccountTo = Convert.ToInt32(rdr["account_to"]);
+            transfer.Amount = Convert.ToDecimal(rdr["amount"]);
+            transfer.TransferId = Convert.ToInt32(rdr["transfer_id"]);
+            transfer.TransferStatusId = Convert.ToInt32(rdr["transfer_status_id"]);
+            transfer.TransferTypeId = Convert.ToInt32(rdr["transfer_type_id"]);
+            return transfer;
         }
     }
 }

@@ -56,7 +56,88 @@ namespace TenmoClient.Views
 
         private MenuOptionResult ViewTransfers()
         {
-            Console.WriteLine("Not yet implemented!");
+            try
+            {
+                string toUsername = "";
+                string fromUsername = "";
+                string type = "";
+
+                List <Transfer> transfers = transferDao.GetTransfers(UserService.GetUserName());
+                List<API_User> users = transferDao.GetUsers();
+                foreach (API_User user in users)
+                {
+                    foreach (Transfer transfer in transfers)
+                    {
+                        if (user.UserId == transfer.AccountTo && user.Username != UserService.GetUserName())
+                        {
+                            type = ($"Type: Send");
+                            toUsername = ($"To: {user.Username}");
+                            fromUsername = ($"From: {UserService.GetUserName()}");
+                        }
+                        if (user.UserId == transfer.AccountFrom && user.Username != UserService.GetUserName())
+                        {
+                            type = ($"Type: Receive");
+                            fromUsername = ($"From: {user.Username}");
+                            toUsername = ($"To: {UserService.GetUserName()}");
+                        }
+                    }
+
+                }
+                Console.WriteLine("--------------------------------------------------------------");
+                Console.WriteLine("Transfers");
+                Console.WriteLine($"{"ID", -5}          {"From/To",-20}                 {"Amount",-10}");
+                Console.WriteLine("--------------------------------------------------------------");
+                foreach (Transfer transfer in transfers)
+                {
+                    if (toUsername == UserService.GetUserName())
+                    {
+                        Console.WriteLine($"{transfer.TransferId,-5}            {fromUsername,-20}              {transfer.Amount,-10}");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"{transfer.TransferId,-5}            {toUsername,-20}              {transfer.Amount,-10}");
+                    }
+                }
+                Console.WriteLine("--------------------------------------------------------------");
+                Console.WriteLine("");
+                bool badInput = true;
+                int transferId = -1;
+                //loop until we find a user id that is actually in the list
+                while (badInput)
+                {
+                    
+                    transferId = GetInteger("Enter Transfer ID to view (0 to cancel): ");
+                    if (transferId == 0)
+                    {
+                        return MenuOptionResult.WaitAfterMenuSelection;
+                    }
+                    foreach (Transfer transfer in transfers)
+                    {
+                        if (transfer.TransferId == transferId)
+                        {
+                            Console.Clear();
+                            Console.WriteLine("--------------------------------------------------------------");
+                            Console.WriteLine("Transfer Details");
+                            Console.WriteLine("--------------------------------------------------------------");
+                            Console.WriteLine($"Id: {transfer.TransferId}");
+                            Console.WriteLine($"{fromUsername}");
+                            Console.WriteLine($"{toUsername}");
+                            Console.WriteLine($"{type}");
+                            Console.WriteLine($"Status: Approved");
+                            Console.WriteLine($"Amount: {transfer.Amount:C2}");
+                            badInput = false;
+                        }
+                    }
+                    if (badInput)
+                    {
+                        Console.WriteLine("Please enter a valid transfer ID!");
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
 
             return MenuOptionResult.WaitAfterMenuSelection;
         }
