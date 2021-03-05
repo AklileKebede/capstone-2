@@ -62,8 +62,14 @@ namespace TenmoClient.Views
                 string fromUsername = "";
                 string type = "";
 
-                List <Transfer> transfers = transferDao.GetTransfers(UserService.GetUserName());
+                List<Transfer> transfers = transferDao.GetTransfers(UserService.GetUserName());
                 List<API_User> users = transferDao.GetUsers();
+
+                Console.WriteLine("--------------------------------------------------------------");
+                Console.WriteLine("Transfers");
+                Console.WriteLine($"{"ID",-5}          {"From/To",-20}                 {"Amount",-10}");
+                Console.WriteLine("--------------------------------------------------------------");
+
                 foreach (API_User user in users)
                 {
                     foreach (Transfer transfer in transfers)
@@ -71,33 +77,23 @@ namespace TenmoClient.Views
                         if (user.UserId == transfer.AccountTo && user.Username != UserService.GetUserName())
                         {
                             type = ($"Type: Send");
-                            toUsername = ($"To: {user.Username}");
-                            fromUsername = ($"From: {UserService.GetUserName()}");
+                            fromUsername = UserService.GetUserName();
+                            toUsername =  user.Username;
+
+                            Console.WriteLine($"{transfer.TransferId,-5}            {$"To: {toUsername}",-20}              {transfer.Amount,-10}");
                         }
                         if (user.UserId == transfer.AccountFrom && user.Username != UserService.GetUserName())
                         {
                             type = ($"Type: Receive");
-                            fromUsername = ($"From: {user.Username}");
-                            toUsername = ($"To: {UserService.GetUserName()}");
+                            fromUsername = user.Username;
+                            toUsername = UserService.GetUserName();
+                            
+                            Console.WriteLine($"{transfer.TransferId,-5}            {$"From: {fromUsername}",-20}              {transfer.Amount,-10}");
                         }
                     }
 
                 }
-                Console.WriteLine("--------------------------------------------------------------");
-                Console.WriteLine("Transfers");
-                Console.WriteLine($"{"ID", -5}          {"From/To",-20}                 {"Amount",-10}");
-                Console.WriteLine("--------------------------------------------------------------");
-                foreach (Transfer transfer in transfers)
-                {
-                    if (toUsername == UserService.GetUserName())
-                    {
-                        Console.WriteLine($"{transfer.TransferId,-5}            {fromUsername,-20}              {transfer.Amount,-10}");
-                    }
-                    else
-                    {
-                        Console.WriteLine($"{transfer.TransferId,-5}            {toUsername,-20}              {transfer.Amount,-10}");
-                    }
-                }
+
                 Console.WriteLine("--------------------------------------------------------------");
                 Console.WriteLine("");
                 bool badInput = true;
@@ -105,7 +101,7 @@ namespace TenmoClient.Views
                 //loop until we find a user id that is actually in the list
                 while (badInput)
                 {
-                    
+
                     transferId = GetInteger("Enter Transfer ID to view (0 to cancel): ");
                     if (transferId == 0)
                     {
@@ -120,8 +116,8 @@ namespace TenmoClient.Views
                             Console.WriteLine("Transfer Details");
                             Console.WriteLine("--------------------------------------------------------------");
                             Console.WriteLine($"Id: {transfer.TransferId}");
-                            Console.WriteLine($"{fromUsername}");
-                            Console.WriteLine($"{toUsername}");
+                            Console.WriteLine($"From: {fromUsername}");
+                            Console.WriteLine($"To: {toUsername}");
                             Console.WriteLine($"{type}");
                             Console.WriteLine($"Status: Approved");
                             Console.WriteLine($"Amount: {transfer.Amount:C2}");

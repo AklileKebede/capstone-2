@@ -80,10 +80,10 @@ namespace TenmoServer.Controllers
         [HttpGet("{username}/transfers")]
         public ActionResult<List<Transfer>> GetTransfers(string username)
         {
-            if (username.ToLower() != User.Identity.Name && !User.IsInRole("Admin"))
-            {
-                return NotFound();
-            }
+            //if (username.ToLower() != User.Identity.Name && !User.IsInRole("Admin"))
+            //{
+            //    return NotFound();
+            //}
             List<Transfer> userTransfers = TransferDAO.GetTransfers(username);
             if (userTransfers == null)
             {

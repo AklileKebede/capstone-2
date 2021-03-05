@@ -6,11 +6,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using TenmoServer.Models;
 using TenmoServer.DAO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TenmoServer.Controllers
 {
     [Route("[controller]")]
     [ApiController]
+    [Authorize]
     public class TransfersController : ControllerBase
     {
         private ITransferDAO TransferDAO;

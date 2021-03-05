@@ -76,7 +76,7 @@ namespace TenmoServer.DAO
                 {
                     conn.Open();
 
-                    SqlCommand cmd = new SqlCommand("SELECT * FROM transfers WHERE account_from = (SELECT user_id from users WHERE username = @username)", conn);
+                    SqlCommand cmd = new SqlCommand("SELECT * FROM transfers WHERE account_from = (SELECT user_id from users WHERE username = @username) Or account_to =(SELECT user_id from users WHERE username = @username)", conn);
                     cmd.Parameters.AddWithValue("@username", username);
                     SqlDataReader rdr = cmd.ExecuteReader();
                     while (rdr.Read())

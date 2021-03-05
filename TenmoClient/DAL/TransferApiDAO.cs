@@ -37,7 +37,7 @@ namespace TenmoClient.DAL
 
         public List<Transfer> GetTransfers(string username)
         {
-            RestRequest request = new RestRequest($"transfers");
+            RestRequest request = new RestRequest($"users/{username}/transfers");
             //users
 
             IRestResponse<List<Transfer>> response = client.Get<List<Transfer>>(request);
